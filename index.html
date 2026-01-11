@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Свечи Силы — Путешествие в мир арканов</title>
+    <meta name="description" content="Интерактивная книга о магии свечей, арканах Таро и устройстве миров">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Philosopher:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #d4af37;
+            --gold-light: #f4e4a6;
+            --crimson: #8b0000;
+            --midnight: #0d0d1a;
+            --flame-orange: #ff6b35;
+            --flame-yellow: #ffd700;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            background: var(--midnight);
+            color: #e8e8e8;
+            min-height: 100vh;
+            overflow-x: hidden;
+            line-height: 1.8;
+        }
+
+        .stars-container {
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none; z-index: 0;
+        }
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle var(--duration) ease-in-out infinite;
+        }
+        @keyframes twinkle {
+            0%, 100% { opacity: var(--min-opacity); transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        .sacred-geometry {
+            position: fixed; top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 800px; height: 800px;
+            pointer-events: none; z-index: 1; opacity: 0.03;
+        }
+        .sacred-geometry svg { width: 100%; height: 100%; animation: rotate-slow 120s linear infinite; }
+        @keyframes rotate-slow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        .hero {
+            min-height: 100vh;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            text-align: center; position: relative; z-index: 10; padding: 2rem;
+        }
+        .hero::before {
+            content: ''; position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(ellipse at center bottom, rgba(139, 0, 0, 0.15) 0%, rgba(26, 10, 46, 0.3) 40%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .candle-container { position: relative; width: 120px; height: 300px; margin-bottom: 3rem; }
+        .candle {
+            position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+            width: 60px; height: 180px;
+            background: linear-gradient(to right, #2a1810 0%, #8b0000 20%, #a52a2a 50%, #8b0000 80%, #2a1810 100%);
+            border-radius: 5px 5px 10px 10px;
+            box-shadow: 0 0 30px rgba(139, 0, 0, 0.3), inset 0 -20px 40px rgba(0, 0, 0, 0.3);
+        }
+        .candle::before {
+            content: ''; position: absolute; top: -15px; left: 50%; transform: translateX(-50%);
+            width: 4px; height: 20px;
+            background: linear-gradient(to top, #1a1a1a, #333); border-radius: 2px;
+        }
+        .flame-container { position: absolute; bottom: 195px; left: 50%; transform: translateX(-50%); width: 40px; height: 80px; }
+        .flame {
+            position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+            width: 30px; height: 60px;
+            background: linear-gradient(to top, var(--flame-orange) 0%, var(--flame-yellow) 30%, #fff 70%, transparent 100%);
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            filter: blur(1px);
+            animation: flicker 0.5s ease-in-out infinite alternate;
+            box-shadow: 0 0 30px var(--flame-yellow), 0 0 60px var(--flame-orange), 0 0 100px rgba(255, 107, 53, 0.5);
+        }
+        .flame::before {
+            content: ''; position: absolute; bottom: 5px; left: 50%; transform: translateX(-50%);
+            width: 15px; height: 35px;
+            background: linear-gradient(to top, #ff9500 0%, #ffcc00 50%, #fff 100%);
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            animation: flicker-inner 0.3s ease-in-out infinite alternate;
+        }
+        @keyframes flicker {
+            0% { transform: translateX(-50%) scale(1) rotate(-1deg); }
+            50% { transform: translateX(-50%) scale(0.98) rotate(0.5deg); }
+            100% { transform: translateX(-50%) scale(1) rotate(0deg); }
+        }
+        @keyframes flicker-inner { 0% { transform: translateX(-50%) scaleY(1); } 100% { transform: translateX(-50%) scaleY(0.95); } }
+        .glow {
+            position: absolute; bottom: 100px; left: 50%; transform: translateX(-50%);
+            width: 200px; height: 200px;
+            background: radial-gradient(ellipse at center, rgba(255, 215, 0, 0.15) 0%, rgba(255, 107, 53, 0.08) 40%, transparent 70%);
+            border-radius: 50%; animation: glow-pulse 3s ease-in-out infinite;
+        }
+        @keyframes glow-pulse { 0%, 100% { opacity: 0.8; transform: translateX(-50%) scale(1); } 50% { opacity: 1; transform: translateX(-50%) scale(1.1); } }
+        .sparks { position: absolute; bottom: 200px; left: 50%; transform: translateX(-50%); width: 60px; height: 100px; overflow: visible; }
+        .spark {
+            position: absolute; width: 3px; height: 3px;
+            background: var(--flame-yellow); border-radius: 50%;
+            animation: spark-rise 2s ease-out infinite;
+            box-shadow: 0 0 6px var(--flame-yellow);
+        }
+        @keyframes spark-rise {
+            0% { opacity: 1; transform: translateY(0) translateX(0) scale(1); }
+            100% { opacity: 0; transform: translateY(-100px) translateX(var(--drift)) scale(0); }
+        }
+
+        .title {
+            font-family: 'Philosopher', serif;
+            font-size: clamp(3rem, 8vw, 6rem); font-weight: 700;
+            color: var(--gold);
+            text-shadow: 0 0 20px rgba(212, 175, 55, 0.5), 0 0 40px rgba(212, 175, 55, 0.3), 0 2px 10px rgba(0, 0, 0, 0.8);
+            letter-spacing: 0.1em; margin-bottom: 1rem;
+            animation: title-glow 3s ease-in-out infinite;
+        }
+        @keyframes title-glow {
+            0%, 100% { text-shadow: 0 0 20px rgba(212, 175, 55, 0.5), 0 0 40px rgba(212, 175, 55, 0.3), 0 2px 10px rgba(0, 0, 0, 0.8); }
+            50% { text-shadow: 0 0 30px rgba(212, 175, 55, 0.7), 0 0 60px rgba(212, 175, 55, 0.5), 0 0 100px rgba(212, 175, 55, 0.3), 0 2px 10px rgba(0, 0, 0, 0.8); }
+        }
+        .subtitle { font-size: clamp(1.2rem, 3vw, 1.8rem); font-style: italic; color: var(--gold-light); opacity: 0.8; margin-bottom: 3rem; max-width: 600px; }
+        .epigraph {
+            font-style: italic; color: rgba(255, 255, 255, 0.6); font-size: 1.1rem;
+            margin-bottom: 3rem; padding: 1.5rem 2rem; border-left: 2px solid var(--gold);
+            max-width: 500px; text-align: left;
+        }
+        .enter-btn {
+            position: relative; display: inline-block; padding: 1.2rem 3rem;
+            font-family: 'Philosopher', serif; font-size: 1.3rem;
+            letter-spacing: 0.2em; text-transform: uppercase;
+            color: var(--gold); background: transparent;
+            border: 2px solid var(--gold); cursor: pointer;
+            overflow: hidden; transition: all 0.4s ease; text-decoration: none;
+        }
+        .enter-btn::before {
+            content: ''; position: absolute; top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+        .enter-btn:hover {
+            background: rgba(212, 175, 55, 0.1);
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.3), inset 0 0 30px rgba(212, 175, 55, 0.1);
+            transform: scale(1.05);
+        }
+        .enter-btn:hover::before { left: 100%; }
+
+        .nav {
+            position: fixed; top: 0; left: 0; right: 0; padding: 1.5rem 3rem;
+            display: flex; justify-content: space-between; align-items: center;
+            z-index: 100;
+            background: linear-gradient(to bottom, rgba(13, 13, 26, 0.95) 0%, transparent 100%);
+            opacity: 0; transform: translateY(-20px); transition: all 0.5s ease;
+        }
+        .nav.visible { opacity: 1; transform: translateY(0); }
+        .nav-logo { font-family: 'Philosopher', serif; font-size: 1.5rem; color: var(--gold); text-decoration: none; }
+        .nav-links { display: flex; gap: 2rem; }
+        .nav-link { color: rgba(255, 255, 255, 0.7); text-decoration: none; font-size: 0.95rem; letter-spacing: 0.1em; transition: color 0.3s ease; }
+        .nav-link:hover { color: var(--gold); }
+
+        .toc-section { min-height: 100vh; padding: 8rem 2rem; position: relative; z-index: 10; }
+        .section-title {
+            font-family: 'Philosopher', serif; font-size: clamp(2rem, 5vw, 3rem);
+            color: var(--gold); text-align: center; margin-bottom: 4rem; position: relative;
+        }
+        .section-title::after {
+            content: ''; position: absolute; bottom: -1rem; left: 50%; transform: translateX(-50%);
+            width: 100px; height: 2px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+        }
+        .parts-container { max-width: 1000px; margin: 0 auto; }
+        .part { margin-bottom: 4rem; }
+        .part-header {
+            display: flex; align-items: center; gap: 1.5rem;
+            margin-bottom: 2rem; padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+        }
+        .part-number { font-family: 'Philosopher', serif; font-size: 0.9rem; letter-spacing: 0.3em; color: var(--gold); opacity: 0.7; }
+        .part-title { font-family: 'Philosopher', serif; font-size: 1.5rem; color: var(--gold-light); }
+        .chapters-list { display: grid; gap: 1rem; }
+        .chapter-link {
+            display: flex; align-items: center; gap: 1.5rem; padding: 1.5rem 2rem;
+            background: rgba(26, 10, 46, 0.3); border: 1px solid rgba(212, 175, 55, 0.1);
+            border-radius: 8px; text-decoration: none; transition: all 0.4s ease; cursor: pointer;
+        }
+        .chapter-link:hover {
+            background: rgba(212, 175, 55, 0.1); border-color: rgba(212, 175, 55, 0.3);
+            transform: translateX(10px); box-shadow: 0 0 30px rgba(212, 175, 55, 0.1);
+        }
+        .chapter-num { font-family: 'Philosopher', serif; font-size: 1.5rem; color: var(--gold); min-width: 2.5rem; }
+        .chapter-info { flex: 1; }
+        .chapter-title { font-size: 1.2rem; color: #fff; margin-bottom: 0.3rem; }
+        .chapter-arrow { color: var(--gold); opacity: 0; transform: translateX(-10px); transition: all 0.3s ease; }
+        .chapter-link:hover .chapter-arrow { opacity: 1; transform: translateX(0); }
+
+        .reader { display: none; min-height: 100vh; padding: 6rem 2rem; position: relative; z-index: 10; }
+        .reader.active { display: block; }
+        .reader-container { max-width: 750px; margin: 0 auto; }
+        .reader-header { text-align: center; margin-bottom: 4rem; padding-bottom: 2rem; border-bottom: 1px solid rgba(212, 175, 55, 0.2); }
+        .reader-part { font-size: 0.9rem; letter-spacing: 0.3em; color: var(--gold); opacity: 0.7; margin-bottom: 1rem; }
+        .reader-title { font-family: 'Philosopher', serif; font-size: clamp(1.8rem, 4vw, 2.5rem); color: var(--gold-light); margin-bottom: 1rem; }
+        .reader-content { font-size: 1.15rem; line-height: 2; color: rgba(255, 255, 255, 0.9); }
+        .reader-content p { margin-bottom: 1.5rem; text-indent: 2rem; }
+        .reader-content p:first-of-type { text-indent: 0; }
+        .reader-content p:first-of-type::first-letter {
+            font-size: 3.5rem; float: left; line-height: 1; margin-right: 0.5rem;
+            color: var(--gold); font-family: 'Philosopher', serif;
+        }
+        .reader-content strong { color: var(--gold-light); font-weight: 600; }
+        .reader-content em { color: rgba(255, 255, 255, 0.8); }
+        .reader-content blockquote {
+            margin: 2rem 0; padding: 1.5rem 2rem; border-left: 3px solid var(--gold);
+            background: rgba(26, 10, 46, 0.3); font-style: italic; text-indent: 0;
+        }
+        .reader-nav {
+            display: flex; justify-content: space-between; margin-top: 4rem;
+            padding-top: 2rem; border-top: 1px solid rgba(212, 175, 55, 0.2);
+            flex-wrap: wrap; gap: 1rem;
+        }
+        .reader-nav-btn {
+            display: flex; align-items: center; gap: 0.5rem; padding: 1rem 2rem;
+            background: transparent; border: 1px solid rgba(212, 175, 55, 0.3);
+            color: var(--gold); font-family: 'Cormorant Garamond', serif;
+            font-size: 1rem; cursor: pointer; transition: all 0.3s ease; text-decoration: none;
+        }
+        .reader-nav-btn:hover { background: rgba(212, 175, 55, 0.1); border-color: var(--gold); }
+        .reader-nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        .back-to-top {
+            position: fixed; bottom: 2rem; right: 2rem; width: 50px; height: 50px;
+            background: rgba(26, 10, 46, 0.8); border: 1px solid var(--gold);
+            border-radius: 50%; color: var(--gold); font-size: 1.5rem;
+            cursor: pointer; opacity: 0; visibility: hidden; transition: all 0.3s ease; z-index: 100;
+        }
+        .back-to-top.visible { opacity: 1; visibility: visible; }
+        .back-to-top:hover { background: var(--gold); color: var(--midnight); }
+
+        .progress-bar {
+            position: fixed; top: 0; left: 0; height: 3px;
+            background: linear-gradient(90deg, var(--crimson), var(--gold), var(--flame-yellow));
+            z-index: 1000; transition: width 0.1s ease;
+        }
+
+        .footer { text-align: center; padding: 4rem 2rem; color: rgba(255, 255, 255, 0.4); font-size: 0.9rem; position: relative; z-index: 10; }
+        .footer a { color: var(--gold); text-decoration: none; }
+
+        .loader {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--midnight); display: flex; justify-content: center; align-items: center;
+            z-index: 10000; transition: opacity 0.8s ease, visibility 0.8s ease;
+        }
+        .loader.hidden { opacity: 0; visibility: hidden; }
+        .loader-symbol {
+            width: 80px; height: 80px;
+            border: 2px solid rgba(212, 175, 55, 0.2); border-top-color: var(--gold);
+            border-radius: 50%; animation: spin 1s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        @media (max-width: 768px) {
+            .nav { padding: 1rem; }
+            .nav-links { display: none; }
+            .chapter-link { padding: 1rem; }
+            .reader-content { font-size: 1.05rem; }
+            .sacred-geometry { width: 400px; height: 400px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="loader" id="loader"><div class="loader-symbol"></div></div>
+    <div class="progress-bar" id="progressBar"></div>
+    <div class="stars-container" id="stars"></div>
+
+    <div class="sacred-geometry">
+        <svg viewBox="0 0 400 400" fill="none" stroke="currentColor" stroke-width="0.5">
+            <circle cx="200" cy="200" r="50" stroke="var(--gold)" opacity="0.5"/>
+            <circle cx="200" cy="150" r="50" stroke="var(--gold)" opacity="0.5"/>
+            <circle cx="200" cy="250" r="50" stroke="var(--gold)" opacity="0.5"/>
+            <circle cx="243" cy="175" r="50" stroke="var(--gold)" opacity="0.5"/>
+            <circle cx="243" cy="225" r="50" stroke="var(--gold)" opacity="0.5"/>
+            <circle cx="157" cy="175" r="50" stroke="var(--gold)" opacity="0.5"/>
+            <circle cx="157" cy="225" r="50" stroke="var(--gold)" opacity="0.5"/>
+            <circle cx="200" cy="200" r="150" stroke="var(--gold)" opacity="0.3"/>
+            <circle cx="200" cy="200" r="180" stroke="var(--gold)" opacity="0.2"/>
+            <polygon points="200,50 330,270 70,270" stroke="var(--gold)" opacity="0.2" fill="none"/>
+            <polygon points="200,350 70,130 330,130" stroke="var(--gold)" opacity="0.2" fill="none"/>
+        </svg>
+    </div>
+
+    <nav class="nav" id="nav">
+        <a href="#" class="nav-logo" onclick="showHero(); return false;">&#10023; Свечи Силы</a>
+        <div class="nav-links">
+            <a href="#toc" class="nav-link" onclick="showToc(); return false;">Содержание</a>
+            <a href="BOOK_STYLED.docx" class="nav-link" download>Скачать .docx</a>
+        </div>
+    </nav>
+
+    <section class="hero" id="hero">
+        <div class="candle-container">
+            <div class="glow"></div>
+            <div class="sparks" id="sparks"></div>
+            <div class="flame-container"><div class="flame"></div></div>
+            <div class="candle"></div>
+        </div>
+        <h1 class="title">Свечи Силы</h1>
+        <p class="subtitle">Путешествие в мир арканов, архетипов и древних практик</p>
+        <blockquote class="epigraph">&#171;Рыба не знает, что живёт в воде.<br>Пока её не вытащат.&#187;</blockquote>
+        <a href="#toc" class="enter-btn" onclick="showToc(); return false;">Открыть книгу</a>
+    </section>
+
+    <section class="toc-section" id="toc" style="display: none;">
+        <h2 class="section-title">Содержание</h2>
+        <div class="parts-container" id="partsContainer"></div>
+    </section>
+
+    <section class="reader" id="reader">
+        <div class="reader-container">
+            <header class="reader-header">
+                <div class="reader-part" id="readerPart"></div>
+                <h1 class="reader-title" id="readerTitle"></h1>
+            </header>
+            <article class="reader-content" id="readerContent"></article>
+            <nav class="reader-nav">
+                <button class="reader-nav-btn" id="prevChapter" onclick="navigateChapter(-1)">&#8592; Предыдущая</button>
+                <button class="reader-nav-btn" onclick="showToc()">&#9776; Содержание</button>
+                <button class="reader-nav-btn" id="nextChapter" onclick="navigateChapter(1)">Следующая &#8594;</button>
+            </nav>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <p>&#10023; Создано с любовью к древним практикам &#10023;</p>
+    </footer>
+
+    <button class="back-to-top" id="backToTop" onclick="scrollToTop()">&#8593;</button>
+
+    <script>
+        let bookData = null;
+        let currentChapter = 0;
+        let allChapters = [];
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            createStars();
+            createSparks();
+
+            try {
+                const response = await fetch('book_data.json');
+                bookData = await response.json();
+                buildToc();
+                buildChaptersList();
+            } catch (e) {
+                useEmbeddedData();
+            }
+
+            setTimeout(() => {
+                document.getElementById('loader').classList.add('hidden');
+            }, 1000);
+
+            window.addEventListener('scroll', handleScroll);
+        });
+
+        function createStars() {
+            const container = document.getElementById('stars');
+            for (let i = 0; i < 150; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.width = star.style.height = Math.random() * 2 + 1 + 'px';
+                star.style.setProperty('--duration', (Math.random() * 3 + 2) + 's');
+                star.style.setProperty('--min-opacity', Math.random() * 0.3 + 0.1);
+                star.style.animationDelay = Math.random() * 3 + 's';
+                container.appendChild(star);
+            }
+        }
+
+        function createSparks() {
+            const container = document.getElementById('sparks');
+            setInterval(() => {
+                if (document.getElementById('hero').style.display !== 'none') {
+                    const spark = document.createElement('div');
+                    spark.className = 'spark';
+                    spark.style.left = (Math.random() * 40 + 10) + 'px';
+                    spark.style.setProperty('--drift', (Math.random() * 40 - 20) + 'px');
+                    spark.style.animationDuration = (Math.random() * 1 + 1.5) + 's';
+                    container.appendChild(spark);
+                    setTimeout(() => spark.remove(), 2500);
+                }
+            }, 300);
+        }
+
+        function buildToc() {
+            if (!bookData) return;
+            const container = document.getElementById('partsContainer');
+            container.innerHTML = '';
+
+            bookData.parts.forEach((part, pi) => {
+                const partDiv = document.createElement('div');
+                partDiv.className = 'part';
+                partDiv.innerHTML = `
+                    <div class="part-header">
+                        <span class="part-number">ЧАСТЬ ${part.number}</span>
+                        <span class="part-title">${part.title}</span>
+                    </div>
+                    <div class="chapters-list" id="part${pi}Chapters"></div>
+                `;
+                container.appendChild(partDiv);
+
+                const chaptersDiv = document.getElementById(`part${pi}Chapters`);
+                part.chapters.forEach((ch, ci) => {
+                    const link = document.createElement('div');
+                    link.className = 'chapter-link';
+                    link.onclick = () => openChapter(pi, ci);
+                    link.innerHTML = `
+                        <span class="chapter-num">${ch.number}</span>
+                        <div class="chapter-info">
+                            <div class="chapter-title">${ch.title}</div>
+                        </div>
+                        <span class="chapter-arrow">&#8594;</span>
+                    `;
+                    chaptersDiv.appendChild(link);
+                });
+            });
+        }
+
+        function buildChaptersList() {
+            if (!bookData) return;
+            allChapters = [];
+            bookData.parts.forEach((part, pi) => {
+                part.chapters.forEach((ch, ci) => {
+                    allChapters.push({ partIndex: pi, chapterIndex: ci, part, chapter: ch });
+                });
+            });
+        }
+
+        function openChapter(partIndex, chapterIndex) {
+            const part = bookData.parts[partIndex];
+            const chapter = part.chapters[chapterIndex];
+
+            currentChapter = allChapters.findIndex(c =>
+                c.partIndex === partIndex && c.chapterIndex === chapterIndex
+            );
+
+            document.getElementById('readerPart').textContent = `ЧАСТЬ ${part.number} \u2022 ${part.title}`;
+            document.getElementById('readerTitle').textContent = `Глава ${chapter.number}. ${chapter.title}`;
+            document.getElementById('readerContent').innerHTML = chapter.content_html || '<p>Содержимое главы...</p>';
+
+            document.getElementById('hero').style.display = 'none';
+            document.getElementById('toc').style.display = 'none';
+            document.getElementById('reader').classList.add('active');
+            document.getElementById('nav').classList.add('visible');
+
+            updateNavButtons();
+            window.scrollTo(0, 0);
+        }
+
+        function navigateChapter(delta) {
+            const newIndex = currentChapter + delta;
+            if (newIndex >= 0 && newIndex < allChapters.length) {
+                const ch = allChapters[newIndex];
+                openChapter(ch.partIndex, ch.chapterIndex);
+            }
+        }
+
+        function updateNavButtons() {
+            document.getElementById('prevChapter').disabled = currentChapter <= 0;
+            document.getElementById('nextChapter').disabled = currentChapter >= allChapters.length - 1;
+        }
+
+        function showHero() {
+            document.getElementById('hero').style.display = 'flex';
+            document.getElementById('toc').style.display = 'none';
+            document.getElementById('reader').classList.remove('active');
+            document.getElementById('nav').classList.remove('visible');
+            window.scrollTo(0, 0);
+        }
+
+        function showToc() {
+            document.getElementById('hero').style.display = 'none';
+            document.getElementById('toc').style.display = 'block';
+            document.getElementById('reader').classList.remove('active');
+            document.getElementById('nav').classList.add('visible');
+            window.scrollTo(0, 0);
+        }
+
+        function handleScroll() {
+            const scrolled = window.scrollY;
+            const height = document.documentElement.scrollHeight - window.innerHeight;
+            const progress = height > 0 ? (scrolled / height) * 100 : 0;
+            document.getElementById('progressBar').style.width = progress + '%';
+            document.getElementById('backToTop').classList.toggle('visible', scrolled > 500);
+        }
+
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function useEmbeddedData() {
+            bookData = {
+                title: "Свечи Силы",
+                parts: [
+                    { number: "I", title: "ОСНОВАНИЯ", chapters: [
+                        { number: 1, title: "Устройство миров", content_html: "<p>Рыба не знает, что живёт в воде. Пока её не вытащат.</p><p>Зачем это знать? Можно пропустить эту главу. Свечи будут гореть и без теории. Огонь не требует диплома.</p><p>Но если вы хотите понимать, <em>что происходит</em>, когда пламя встречается с древней силой \u2014 читайте дальше.</p>" },
+                        { number: 2, title: "Что такое \u00abЯ\u00bb, которое путешествует", content_html: "<p>Глава 2...</p>" },
+                        { number: 3, title: "Пять одежд души", content_html: "<p>Глава 3...</p>" },
+                        { number: 4, title: "Биоробот с опцией пробуждения", content_html: "<p>Глава 4...</p>" },
+                        { number: 5, title: "Зачем это Творцу", content_html: "<p>Глава 5...</p>" },
+                        { number: 6, title: "Архетипы: боги без лица", content_html: "<p>Глава 6...</p>" }
+                    ]},
+                    { number: "II", title: "КАРТА", chapters: [
+                        { number: 7, title: "Десять узлов силы", content_html: "<p>Глава 7...</p>" },
+                        { number: 8, title: "Двадцать два пути", content_html: "<p>Глава 8...</p>" },
+                        { number: 9, title: "Пять кругов: от простого к глубокому", content_html: "<p>Глава 9...</p>" },
+                        { number: 10, title: "Четыре стихии и четыре ключа", content_html: "<p>Глава 10...</p>" }
+                    ]},
+                    { number: "III", title: "ПРАКТИКА", chapters: [
+                        { number: 11, title: "Перед тем как зажечь", content_html: "<p>Глава 11...</p>" },
+                        { number: 12, title: "Работа со свечой", content_html: "<p>Глава 12...</p>" },
+                        { number: 13, title: "Когда что-то идёт не так", content_html: "<p>Глава 13...</p>" },
+                        { number: 14, title: "Дневник практики", content_html: "<p>Глава 14...</p>" },
+                        { number: 15, title: "В добрый путь", content_html: "<p>Глава 15...</p>" }
+                    ]}
+                ]
+            };
+            buildToc();
+            buildChaptersList();
+        }
+    </script>
+</body>
+</html>
