@@ -271,12 +271,98 @@
         }
         @keyframes spin { to { transform: rotate(360deg); } }
 
+        /* Планшеты */
+        @media (max-width: 1024px) {
+            .reader-content { font-size: 1.25rem; }
+            .reader-container { max-width: 90%; }
+        }
+
+        /* Мобильные устройства */
         @media (max-width: 768px) {
+            body { font-size: 18px; line-height: 1.9; }
+
             .nav { padding: 1rem; }
             .nav-links { display: none; }
-            .chapter-link { padding: 1rem; }
-            .reader-content { font-size: 1.05rem; }
-            .sacred-geometry { width: 400px; height: 400px; }
+            .nav-logo { font-size: 1.3rem; }
+
+            .hero { padding: 1.5rem; min-height: 100svh; }
+            .candle-container { transform: scale(0.8); margin-bottom: 2rem; }
+            .title { font-size: clamp(2.2rem, 10vw, 3.5rem); letter-spacing: 0.05em; }
+            .subtitle { font-size: clamp(1.1rem, 4vw, 1.4rem); margin-bottom: 2rem; }
+            .epigraph { font-size: 1.1rem; padding: 1.2rem 1.5rem; margin-bottom: 2rem; }
+            .enter-btn { padding: 1.2rem 2.5rem; font-size: 1.1rem; }
+
+            .toc-section { padding: 5rem 1rem; }
+            .section-title { font-size: clamp(1.6rem, 6vw, 2.2rem); margin-bottom: 2.5rem; }
+
+            .part-header { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+            .part-number { font-size: 0.85rem; }
+            .part-title { font-size: 1.3rem; }
+
+            .chapter-link { padding: 1.2rem 1rem; }
+            .chapter-num { font-size: 1.3rem; min-width: 2rem; }
+            .chapter-title { font-size: 1.15rem; line-height: 1.4; }
+
+            .reader { padding: 4rem 1rem; }
+            .reader-container { max-width: 100%; }
+            .reader-header { margin-bottom: 2.5rem; padding-bottom: 1.5rem; }
+            .reader-part { font-size: 0.85rem; }
+            .reader-title { font-size: clamp(1.5rem, 5vw, 2rem); }
+
+            .reader-content {
+                font-size: 1.2rem;
+                line-height: 2;
+                text-align: left;
+            }
+            .reader-content p {
+                margin-bottom: 1.8rem;
+                text-indent: 1.5rem;
+            }
+            .reader-content p:first-of-type::first-letter {
+                font-size: 3rem;
+                margin-right: 0.3rem;
+            }
+            .reader-content blockquote {
+                padding: 1.2rem 1rem;
+                margin: 1.5rem 0;
+                font-size: 1.1rem;
+            }
+
+            .reader-nav {
+                flex-direction: column;
+                gap: 0.8rem;
+            }
+            .reader-nav-btn {
+                width: 100%;
+                justify-content: center;
+                padding: 1.2rem;
+                font-size: 1.1rem;
+            }
+
+            .back-to-top {
+                width: 55px;
+                height: 55px;
+                bottom: 1.5rem;
+                right: 1.5rem;
+                font-size: 1.8rem;
+            }
+
+            .sacred-geometry { width: 300px; height: 300px; }
+            .footer { padding: 3rem 1rem; font-size: 1rem; }
+        }
+
+        /* Маленькие мобильные */
+        @media (max-width: 400px) {
+            body { font-size: 17px; }
+            .title { font-size: 2rem; }
+            .reader-content { font-size: 1.15rem; }
+            .chapter-title { font-size: 1.1rem; }
+            .enter-btn { padding: 1rem 2rem; font-size: 1rem; }
+        }
+
+        /* Крупный текст для удобства чтения */
+        @media (max-width: 768px) and (min-resolution: 2dppx) {
+            .reader-content { font-size: 1.25rem; }
         }
     </style>
 </head>
